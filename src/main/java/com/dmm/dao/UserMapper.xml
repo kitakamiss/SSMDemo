@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- Title	 		: UserMapper.xml -->
+<!-- Description	: UserMapper.xml  -->
+<!-- DevelopTools	: Eclipse_x64_v4.6.2 -->
+<!-- DevelopSystem	: liangzl's Code Generator -->
+<!-- Company	 	: com.liangzl -->
+<!-- author	 		: liangzl -->
+<!-- date	 		: 2017年08月02日 23:25:41 -->
+<!-- version	 	: 6.0.0 -->
+<mapper namespace="com.dmm.dao.UserMapper">
+
+	<!-- 配置ORM映射 -->
+	<resultMap id="resultMap_User" type="com.dmm.model.User">
+		<id property="userid" column="Userid" javaType="Integer"/>
+		<result property="username" column="USERNAME" javaType="String"/>
+		<result property="password" column="Password" javaType="String"/>
+	</resultMap>
+	
+	<!-- 基本的字段信息 -->
+	<sql id="base_Column_List">
+		<trim suffixOverrides=",">
+			Userid, 
+			USERNAME, 
+			Password, 
+		</trim>
+	</sql>
+	
+	<!-- 查询字段信息 -->
+	<sql id="select_Column_List">
+		<choose>
+			<!-- 自定义查询字段信息 -->
+			<when test="queryVo != null and queryVo.columnNameList != null and queryVo.columnNameList.size > 0">
+				<foreach collection="queryVo.columnNameList" item="selectColumnName" separator=",">
+					${selectColumnName}
+				</foreach>
+			</when>
+			<!-- 全部查询字段信息 -->
+			<otherwise>
+				<include refid="base_Column_List"/>
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<!-- and查询条件 -->
+	<sql id="and_where_clause">
+		<if test="queryVo != null and queryVo.andWhereClauseList.size > 0">
+			<foreach collection="queryVo.andWhereClauseList" item="whereClause">
+				<if test="whereClause.columnName != null and whereClause.columnName != ''">
+					<choose>
+						<when test="whereClause.isNull != null and whereClause.isNull != ''">
+							AND ${whereClause.columnName} IS NULL 
+						</when>
+						<when test="whereClause.isNotNull != null and whereClause.isNull != ''">
+							AND ${whereClause.columnName} IS NOT NULL 
+						</when>
+						<when test="whereClause.equalTo != null">
+							AND ${whereClause.columnName} = #{whereClause.equalTo}
+						</when>
+						<when test="whereClause.notEqualTo != null">
+							AND ${whereClause.columnName} != #{whereClause.notEqualTo}
+						</when>
+						<when test="whereClause.greaterThan != null and whereClause.greaterThan != ''">
+							AND ${whereClause.columnName} &gt; #{whereClause.greaterThan}
+						</when>
+						<when test="whereClause.greaterThanOrEqualTo != null and whereClause.greaterThanOrEqualTo != ''">
+							AND ${whereClause.columnName} &gt;= #{whereClause.greaterThanOrEqualTo}
+						</when>
+						<when test="whereClause.lessThan != null and whereClause.lessThan != ''">
+							AND ${whereClause.columnName} &lt; #{whereClause.lessThan}
+						</when>
+						<when test="whereClause.lessThanOrEqualTo != null and whereClause.lessThanOrEqualTo != ''">
+							AND ${whereClause.columnName} &lt;= #{whereClause.lessThanOrEqualTo}
+						</when>
+						<when test="whereClause.like != null and whereClause.like != ''">
+							AND ${whereClause.columnName} LIKE CONCAT('%', #{whereClause.like}, '%')
+						</when>
+						<when test="whereClause.notlike != null and whereClause.notlike != ''">
+							AND ${whereClause.columnName} NOT LIKE CONCAT('%', #{whereClause.notlike}, '%')
+						</when>
+						<when test="whereClause.inList != null and whereClause.inList.size > 0">
+							AND ${whereClause.columnName} IN 
+							<foreach collection="whereClause.inList" item="in_value" open="(" close=")" separator=", ">
+								#{in_value}
+							</foreach>
+						</when>
+						<when test="whereClause.notInList != null and whereClause.notInList.size > 0">
+							AND ${whereClause.columnName} NOT IN 
+							<foreach collection="whereClause.notInList" item="not_in_value" open="(" close=")" separator=", ">
+								#{not_in_value}
+							</foreach>
+						</when>
+						<when test="whereClause.betweenOpt != null and whereClause.betweenValue1 != null and whereClause.betweenValue1 != '' and whereClause.betweenValue2 != null and whereClause.betweenValue2 != '' ">
+							AND ${whereClause.columnName} ${whereClause.betweenOpt} #{whereClause.betweenValue1} AND #{whereClause.betweenValue2} 
+						</when>
+						<when test="whereClause.allEqualTo != null">
+							AND BINARY ${whereClause.columnName} = #{whereClause.allEqualTo}
+						</when>
+						<when test="whereClause.notAllEqualTo != null">
+							AND BINARY ${whereClause.columnName} != #{whereClause.notAllEqualTo}
+						</when>
+					</choose>
+				</if>
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- or查询条件 -->
+	<sql id="or_where_clause">
+		<if test="queryVo != null and queryVo.orWhereClauseList.size > 0">
+			<foreach collection="queryVo.orWhereClauseList" item="whereClause">
+				<if test="whereClause.columnName != null and whereClause.columnName != ''">
+					<choose>
+						<when test="whereClause.isNull != null and whereClause.isNull != ''">
+							OR ${whereClause.columnName} IS NULL 
+						</when>
+						<when test="whereClause.isNotNull != null and whereClause.isNull != ''">
+							OR ${whereClause.columnName} IS NOT NULL 
+						</when>
+						<when test="whereClause.equalTo != null">
+							OR ${whereClause.columnName} = #{whereClause.equalTo}
+						</when>
+						<when test="whereClause.notEqualTo != null">
+							OR ${whereClause.columnName} != #{whereClause.notEqualTo}
+						</when>
+						<when test="whereClause.greaterThan != null and whereClause.greaterThan != ''">
+							OR ${whereClause.columnName} &gt; #{whereClause.greaterThan}
+						</when>
+						<when test="whereClause.greaterThanOrEqualTo != null and whereClause.greaterThanOrEqualTo != ''">
+							OR ${whereClause.columnName} &gt;= #{whereClause.greaterThanOrEqualTo}
+						</when>
+						<when test="whereClause.lessThan != null and whereClause.lessThan != ''">
+							OR ${whereClause.columnName} &lt; #{whereClause.lessThan}
+						</when>
+						<when test="whereClause.lessThanOrEqualTo != null and whereClause.lessThanOrEqualTo != ''">
+							OR ${whereClause.columnName} &lt;= #{whereClause.lessThanOrEqualTo}
+						</when>
+						<when test="whereClause.like != null and whereClause.like != ''">
+							OR ${whereClause.columnName} LIKE CONCAT('%', #{whereClause.like}, '%')
+						</when>
+						<when test="whereClause.notlike != null and whereClause.notlike != ''">
+							OR ${whereClause.columnName} NOT LIKE CONCAT('%', #{whereClause.notlike}, '%')
+						</when>
+						<when test="whereClause.inList != null and whereClause.inList.size > 0">
+							OR ${whereClause.columnName} IN 
+							<foreach collection="whereClause.inList" item="in_value" open="(" close=")" separator=", ">
+								#{in_value}
+							</foreach>
+						</when>
+						<when test="whereClause.notInList != null and whereClause.notInList.size > 0">
+							OR ${whereClause.columnName} NOT IN 
+							<foreach collection="whereClause.notInList" item="not_in_value" open="(" close=")" separator=", ">
+								#{not_in_value}
+							</foreach>
+						</when>
+						<when test="whereClause.betweenOpt != null and whereClause.betweenValue1 != null and whereClause.betweenValue1 != '' and whereClause.betweenValue2 != null and whereClause.betweenValue2 != '' ">
+							OR ${whereClause.columnName} ${whereClause.betweenOpt} #{whereClause.betweenValue1} AND #{whereClause.betweenValue2} 
+						</when>
+						<when test="whereClause.allEqualTo != null">
+							OR BINARY ${whereClause.columnName} = #{whereClause.allEqualTo}
+						</when>
+						<when test="whereClause.notAllEqualTo != null">
+							OR BINARY ${whereClause.columnName} != #{whereClause.notAllEqualTo}
+						</when>
+					</choose>
+				</if>
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 排序条件 -->
+	<sql id="order_clause">
+		<if test="queryVo != null and queryVo.orderByList != null and queryVo.orderByList.size > 0">
+			<foreach collection="queryVo.orderByList" item="orderColumnName" open="ORDER BY " separator=",">
+				${orderColumnName}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 分页条件 -->
+	<sql id="paging_clause">
+		<if test="queryVo != null and queryVo.limit != null and queryVo.limit.offset != null and queryVo.limit.limit != null">
+			 LIMIT #{queryVo.limit.offset} , #{queryVo.limit.limit}
+		</if>
+	</sql>
+	
+	<!-- 插入数据 -->
+	<insert id="insertSelective" parameterType="com.dmm.model.User" useGeneratedKeys="true" keyProperty="user.userid">
+		INSERT INTO
+			user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user.userid != null">
+				Userid,
+			</if>
+			<if test="user.username != null">
+				USERNAME,
+			</if>
+			<if test="user.password != null">
+				Password,
+			</if>
+		</trim>
+		VALUES 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user.userid != null">
+				#{user.userid, jdbcType=INTEGER},
+			</if>
+			<if test="user.username != null">
+				#{user.username, jdbcType=VARCHAR},
+			</if>
+			<if test="user.password != null">
+				#{user.password, jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 根据主键删除 -->
+	<delete id="deleteByPrimaryKey" parameterType="Integer">
+		DELETE FROM user WHERE Userid = #{userid, jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 根据条件删除 -->
+	<delete id="deleteByWhere" parameterType="com.dmm.base.model.QueryVo">
+		DELETE FROM user <where><include refid="and_where_clause"/><include refid="or_where_clause"/></where>
+	</delete>
+	
+	<!-- 根据主键,选择性更新 -->
+	<update id="updateByPrimaryKey" parameterType="com.dmm.model.User">
+		UPDATE
+			user
+		<set>
+			<trim suffix="" suffixOverrides=",">
+				<if test="user.userid != null"> 
+					Userid = #{user.userid, jdbcType=INTEGER},
+				</if>
+				<if test="user.username != null"> 
+					USERNAME = #{user.username, jdbcType=VARCHAR},
+				</if>
+				<if test="user.password != null"> 
+					Password = #{user.password, jdbcType=VARCHAR},
+				</if>
+			</trim>
+		</set>
+		WHERE Userid = #{user.userid, jdbcType=INTEGER}
+	</update>
+	
+	<!-- 根据条件,选择性更新 -->
+	<update id="updateByWhere">
+		UPDATE
+			user
+		<set>
+			<trim suffix="" suffixOverrides=",">
+				<if test="user.userid != null"> 
+					Userid = #{user.userid, jdbcType=INTEGER},
+				</if>
+				<if test="user.username != null"> 
+					USERNAME = #{user.username, jdbcType=VARCHAR},
+				</if>
+				<if test="user.password != null"> 
+					Password = #{user.password, jdbcType=VARCHAR},
+				</if>
+			</trim>
+		</set>
+		<where><include refid="and_where_clause"/><include refid="or_where_clause"/></where>
+	</update>
+	
+	<!-- 根据主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="resultMap_User" parameterType="Integer">
+		SELECT <include refid="base_Column_List"/> FROM user WHERE Userid = #{userid} LIMIT 1
+	</select>
+	
+	<!-- 根据查询条件查询 -->
+	<select id="selectByWhere" parameterType="com.dmm.base.model.QueryVo" resultMap="resultMap_User">
+		SELECT <include refid="select_Column_List"/> FROM user <where><include refid="and_where_clause"/><include refid="or_where_clause"/></where> <include refid="order_clause"/> <include refid="paging_clause"/>
+	</select>
+
+	<!-- 根据查询条件统计结果 -->
+	<select id="countByWhere" parameterType="com.dmm.base.model.QueryVo" resultType="Long">
+		SELECT COUNT(1) FROM user <where><include refid="and_where_clause"/><include refid="or_where_clause"/></where>
+	</select>
+	
+</mapper>
